@@ -37,8 +37,8 @@ npm v3.0.0+
 ├── node_modules           // 依赖的模块
 ├── static                 // 静态文件
 │   └── css
-├── .babelrc	  		       // 设置转码的规则和插件
-├── .editorconfig	         // 设置编辑器
+├── .babelrc               // 设置转码的规则和插件
+├── .editorconfig          // 设置编辑器
 ├── .eslintignore          // 设置eslint忽略检查的文件
 ├── .eslintrc.js           // eslint配置
 ├── .gitignore             // git提交配置
@@ -56,7 +56,7 @@ npm v3.0.0+
 3. 项目使用css的预处理器stylus进行样式编写，使用到了Flex布局,sticky foot布局,还有兼容其它移动端的1像素边框制作
 4. 使用mock数据，独立于后端进行开发
 5. 使用Eslint来规范代码编写
-6. 使用[better-scroll](https://github.com/ustbhuangyi/better-scroll)做页面滚动
+6. 使用better-scroll插件做页面滚动
 
 ### 项目页面
 ![pageshot](https://github.com/ickedesign/Vue2.x_SellApp/blob/master/pageshot.jpg)
