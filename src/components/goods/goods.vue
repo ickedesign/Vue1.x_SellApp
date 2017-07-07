@@ -1,43 +1,45 @@
 <template>
-  <div class="goods">
-    <div class="menu-wrapper" v-el:menu-wrapper>
-      <ul>
-        <li v-for="item in goods" class="menu-item" :class="{'current':currentIndex===$index}" @click="selectMenu($index, $event)">
-          <span class="text border-1px">
-            <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
-          </span>
-        </li>
-      </ul>
+  <div>
+    <div class="goods">
+      <div class="menu-wrapper" ref="menuWrapper">
+        <ul>
+          <li v-for="(item,index) in goods" class="menu-item" :class="{'current':currentIndex===index}" @click="selectMenu(index, $event)">
+            <span class="text border-1px">
+              <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
+            </span>
+          </li>
+        </ul>
+      </div>
+      <div class="foods-wrapper" ref="foodsWrapper">
+        <ul>
+          <li v-for="item in goods" class="food-list" ref="foodList">
+            <h1 class="title">{{item.name}}</h1>
+            <ul>
+              <li v-for="food in item.foods" class="food-item border-1px">
+                <div class="icon">
+                  <img width="57" height="57" :src="food.icon">
+                </div>
+                <div class="content">
+                  <h2 class="name">{{food.name}}</h2>
+                  <p class="desc">{{food.description}}</p>
+                  <div class="extra">
+                    <span class="count">月售{{food.sellCount}}份</span><span>好评率{{food.rating}}%</span>
+                  </div>
+                  <div class="price">
+                    <span class="now">￥{{food.price}}</span>
+                    <span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
+                  </div>
+                  <div class="cartcontrol-wrapper">
+                    <cartcontrol :food="food"></cartcontrol>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
     </div>
-    <div class="foods-wrapper" v-el:foods-wrapper>
-      <ul>
-        <li v-for="item in goods" class="food-list food-list-hook">
-          <h1 class="title">{{item.name}}</h1>
-          <ul>
-            <li v-for="food in item.foods" class="food-item border-1px">
-              <div class="icon">
-                <img width="57" height="57" :src="food.icon">
-              </div>
-              <div class="content">
-                <h2 class="name">{{food.name}}</h2>
-                <p class="desc">{{food.description}}</p>
-                <div class="extra">
-                  <span class="count">月售{{food.sellCount}}份</span><span>好评率{{food.rating}}%</span>
-                </div>
-                <div class="price">
-                  <span class="now">￥{{food.price}}</span>
-                  <span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
-                </div>
-                <div class="cartcontrol-wrapper">
-                  <cartcontrol :food="food"></cartcontrol>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
   </div>
 </template>
 
@@ -60,20 +62,6 @@
         listHeight: [],
         scrollY: 0
       };
-    },
-    created() {
-      this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
-
-      this.$http.get('./api/goods').then((response) => {
-        response = response.body;
-        if (response.errno === ERR_OK) {
-          this.goods = response.data;
-          this.$nextTick(() => {
-            this._initScroll();
-            this._calculateHeight();
-          });
-        }
-      });
     },
     computed: {
       currentIndex() {
@@ -98,22 +86,36 @@
         return foods;
       }
     },
+    created() {
+      this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
+
+      this.$http.get('./api/goods').then((response) => {
+        response = response.body;
+        if (response.errno === ERR_OK) {
+          this.goods = response.data;
+          this.$nextTick(() => {
+            this._initScroll();
+            this._calculateHeight();
+          });
+        }
+      });
+    },
     methods: {
       selectMenu(index, event) {
         if (!event._constructed) {
           return;
         }
-        let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook');
+        let foodList = this.$refs.foodList;
         let el = foodList[index];
         this.foodsScroll.scrollToElement(el, 300);
       },
       _initScroll() {
         // 两个参数：dom对象,json对象
-        this.menuScroll = new BScroll(this.$els.menuWrapper, {
+        this.menuScroll = new BScroll(this.$refs.menuWrapper, {
           click: true
         });
         // 实时跟踪滚动的变化
-        this.foodsScroll = new BScroll(this.$els.foodsWrapper, {
+        this.foodsScroll = new BScroll(this.$refs.foodsWrapper, {
           click: true,
           probeType: 3
         });
@@ -122,7 +124,7 @@
         });
       },
       _calculateHeight() {
-        let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook');
+        let foodList = this.$refs.foodList;
         let height = 0;
         this.listHeight.push(height);
         for (let i = 0; i < foodList.length; i++) {
@@ -235,15 +237,15 @@
             line-height: 24px
             .now
               margin-right: 8px
-              font-weight: 700
               font-size: 14px
+              font-weight: 700
               color: rgb(240, 20, 20)
             .old
               text-decoration: line-through
-              font-weight: 700
               font-size: 10px
+              font-weight: 700
               color: rgb(147, 153, 159)
-          .cartcontrol
+          .cartcontrol-wrapper
             position: absolute
             right: 0
             bottom: 12px
