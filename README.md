@@ -3,7 +3,7 @@ Vue2.x_SellApp
 > 仿饿了吗外卖APP单页[vue, vue-router, vue-resource]
 
 ### 环境依赖
-node v4.0.0+
+node v4.0.0+<br>
 npm v3.0.0+
 
 ### 部署步骤
@@ -13,7 +13,7 @@ npm v3.0.0+
 4. npm run dev  
 
 ### 项目打包
-1. npm run build
+npm run build
 
 ### 目录结构描述
 ```
